@@ -34,7 +34,7 @@ public class TransferController {
         AccountResponse accountResponse = new AccountResponse();
         try {
             accountResponse = service.transferMoney(request);
-            System.out.println(accountResponse);
+            System.out.println(Thread.currentThread().getId() + " - " + accountResponse);
             log.info("Response: {}", accountResponse);
             return Response.status(200).entity(accountResponse).build();
         } catch (NotFoundAccountException | BadDataException | NoMoneyOnAccountException e) {

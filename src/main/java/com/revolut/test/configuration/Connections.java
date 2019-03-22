@@ -30,6 +30,7 @@ public class Connections {
         if (conn == null) {
             conn = connectionPool.getConnection();
             currentConnection.set(conn);
+            System.out.println(Thread.currentThread().getId() + " get conn " + conn);
         }
 
         return conn;
@@ -41,7 +42,8 @@ public class Connections {
 
             try {
                 conn.commit();
-                conn.close();
+                System.out.println(Thread.currentThread().getId() + " rel conn " + conn);
+                connectionPool.releaseConnection(conn);
                 currentConnection.set(null);
             } catch (SQLException e) {
                 e.printStackTrace();
