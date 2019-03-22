@@ -56,7 +56,9 @@ public class BasicConnectionPool implements ConnectionPool {
     }
 
     private static Connection createConnection(String url, String user, String password) throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+        Connection conn = DriverManager.getConnection(url, user, password);
+        conn.setAutoCommit(false);
+        return conn;
     }
 
     @Override

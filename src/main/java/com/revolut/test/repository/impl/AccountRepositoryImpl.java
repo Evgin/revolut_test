@@ -1,7 +1,6 @@
 package com.revolut.test.repository.impl;
 
-import com.revolut.test.configuration.BasicConnectionPool;
-import com.revolut.test.configuration.ConnectionPool;
+import com.revolut.test.configuration.Connections;
 import com.revolut.test.exception.BadDataException;
 import com.revolut.test.exception.NotFoundAccountException;
 import com.revolut.test.model.Account;
@@ -19,20 +18,12 @@ import java.util.List;
 
 public class AccountRepositoryImpl implements AccountRepository {
 
-    private static ConnectionPool connectionPool;
-
     private static final Logger log = LoggerFactory.getLogger(AccountRepositoryImpl.class);
 
 
     //private static final H2MemoryDatabaseConfiguration configuration = new H2MemoryDatabaseConfiguration();
 
     public AccountRepositoryImpl() {
-        try {
-            connectionPool = BasicConnectionPool
-                    .create();
-        } catch (SQLException e) {
-            log.error(Arrays.toString(e.getStackTrace()));
-        }
     }
 
 
@@ -42,7 +33,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         Account account = null;
         try {
             log.info("Operation \"Find account by id\" begin, id: {}", accountId);
-            connection = connectionPool.getConnection();
+            connection = Connections.getConnection();
 
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select * from ACCOUNT where id=" + accountId + "FOR UPDATE");
@@ -59,7 +50,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
         }
         log.info("Operation \"Find account by id\" was done success");
-        closeConnection("findAccountByNumberWithLock", connection);
+//        closeConnection("findAccountByNumberWithLock", connection);
         return account;
     }
 
@@ -69,7 +60,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         List<Account> accountList = new ArrayList<>();
         Connection connection = null;
         try {
-            connection = connectionPool.getConnection();
+            connection = Connections.getConnection();
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select * from ACCOUNT");
             while (rs.next()) {
@@ -82,7 +73,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
         }
         log.info("Operation \"Get all accounts\" was done success");
-        closeConnection("getAllAccounts", connection);
+//        closeConnection("getAllAccounts", connection);
         return accountList;
     }
 
@@ -92,17 +83,16 @@ public class AccountRepositoryImpl implements AccountRepository {
         accountVerification(account);
         Connection connection = null;
         try {
-            connection = connectionPool.getConnection();
+            connection = Connections.getConnection();
             Statement stmt = connection.createStatement();
             stmt.execute("INSERT INTO ACCOUNT(id, amount) VALUES("
                     + account.getId() + ", " + account.getAmount() + ")");
-            connection.commit();
         } catch (SQLException e) {
             log.error(Arrays.toString(e.getStackTrace()));
             log.error("SQLException an operation \"Save Account\", exception: " + e.getMessage());
         }
         log.info("Operation \"Save Account\" was done success");
-        closeConnection("saveAccount", connection);
+//        closeConnection("saveAccount", connection);
 
     }
 
@@ -112,17 +102,15 @@ public class AccountRepositoryImpl implements AccountRepository {
         accountVerification(account);
         Connection connection = null;
         try {
-            connection = connectionPool.getConnection();
+            connection = Connections.getConnection();
             Statement stmt = connection.createStatement();
             stmt.execute("update ACCOUNT set amount=" + account.getAmount() + " where id=" + account.getId());
-            connection.commit();
         } catch (SQLException e) {
             log.error(Arrays.toString(e.getStackTrace()));
             log.error("SQLException an operation \"Update Account\", exception: " + e.getMessage());
         }
         log.info("Operation \"Update Account\" was done success");
-        closeConnection("updateAccount", connection);
-
+//        closeConnection("updateAccount", connection);
     }
 
     private void accountVerification(Account account) {
@@ -132,16 +120,16 @@ public class AccountRepositoryImpl implements AccountRepository {
         }
     }
 
-    private void closeConnection(String methodName, Connection connection) {
-        try {
-            if(connection != null) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            log.error("SQLException an {} " +
-                    "when connection close {}", methodName, e.getMessage());
-            log.error(Arrays.toString(e.getStackTrace()));
-        }
-    }
+//    private void closeConnection(String methodName, Connection connection) {
+//        try {
+//            if (connection != null) {
+//                connection.close();
+//            }
+//        } catch (SQLException e) {
+//            log.error("SQLException an {} " +
+//                    "when connection close {}", methodName, e.getMessage());
+//            log.error(Arrays.toString(e.getStackTrace()));
+//        }
+//    }
 
 }

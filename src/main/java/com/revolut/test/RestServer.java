@@ -1,5 +1,6 @@
 package com.revolut.test;
 
+import com.revolut.test.configuration.H2MemoryDatabaseConfiguration;
 import com.revolut.test.controller.TransferController;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -7,7 +8,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 public class RestServer {
 
-    //private static H2MemoryDatabaseConfiguration configuration = new H2MemoryDatabaseConfiguration();
+    private static H2MemoryDatabaseConfiguration configuration = new H2MemoryDatabaseConfiguration();
 
     public static void main(String[] args) throws Exception {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -22,9 +23,10 @@ public class RestServer {
 
         jerseyServlet.setInitParameter(
                 "jersey.config.server.provider.classnames",
-                TransferController.class.getCanonicalName());
+                "com.revolut.test.configuration.interceptors.RestRequestInterceptor," +
+                        "com.revolut.test.controller.TransferController");
 
-        //configuration.createTableAndInsertData();
+        configuration.createTableAndInsertData();
 
         try {
             jettyServer.start();
