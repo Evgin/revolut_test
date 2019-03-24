@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountRepositoryImplTest {
-/*
+
     @Mock
     private BasicConnectionPool ds;
 
@@ -41,7 +41,7 @@ public class AccountRepositoryImplTest {
     @InjectMocks
     private AccountRepositoryImpl repository;
 
-    private Account a;*/
+    private Account a;
 
 
     @Before
